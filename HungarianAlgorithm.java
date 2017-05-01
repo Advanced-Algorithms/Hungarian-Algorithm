@@ -24,9 +24,23 @@ public class HungarianAlgorithm
 	public static void main(String[] args)
 	{
 		BipartiteGraph g = new BipartiteGraph(Integer.parseInt(args[0]),Integer.parseInt(args[1]));
-		graph = g;
-		g.populateEdges();
-		g.printGraph();
+		// graph = g;
+		// g.populateEdges();
+		// g.printGraph();
+		BipartiteGraph mygraph = new BipartiteGraph(3, 15); //debugging purposes
+		mygraph.addEdge("x1", "y1", 1);
+		mygraph.addEdge("x1", "y2", 6);
+		mygraph.addEdge("x2", "y2", 8);
+		mygraph.addEdge("x2", "y3", 6);
+		mygraph.addEdge("x3", "y1", 4);
+		mygraph.addEdge("x3", "y3", 1);
+		// mygraph.addEdge("x4", "y1", 5);
+		// mygraph.addEdge("x5", "y2", 9);
+		// mygraph.addEdge("x4", "y4", 6);
+		// mygraph.addEdge("x5", "y4", 14);
+		graph=mygraph;
+		graph.printGraph();
+
 		HungarianAlgorithm();
 	}
 
@@ -47,20 +61,16 @@ public class HungarianAlgorithm
 			//System.out.println(v.getLabel());
 
 		}
-		for (Vertice v: graph.xverts)
+		for (Vertice v: graph.yverts)
 		{
 			v.setLabel (0);
 		}
-
-
-		//doStep2(initial_match,graph.size,feasible_labelled,graph);
+		//graph.printLabel();
 		doStep2(graph.size);
 	}
 
-	//public static void figureOutNextStep(Set<Vertice> s, BipartiteGraph feasible_labelled, BipartiteGraph graph, Set<Vertice> t)
 	
 
-	//public static void doStep2(BipartiteGraph initial_match, int graphsize,BipartiteGraph feasible_labelled, BipartiteGraph graph)
 	public static void doStep2(int graphsize)
 	{
 		s = new HashSet<Vertice>();
@@ -189,13 +199,16 @@ public class HungarianAlgorithm
 		for (Vertice v : s)
 		{
 			String name = v.getName();
+			System.out.println(name + "From set S");
 			for (Vertice y: graph.yverts)
 			{
 				if(!checkKey(y.getName(),false)) 
 				{
+					System.out.println(y.getName() +" Not in Set T");
 					int weight=graph.edgeWeight(v.getName(), y.getName());
 					if(weight!=0)
 					{
+						System.out.println("weight of edge is "+ weight);
 						int newValue = v.getLabel() + y.getLabel() - weight;
 						if(newValue<min)
 						{
@@ -206,6 +219,8 @@ public class HungarianAlgorithm
 				}
 			}
 		}
+		System.out.println("Min Calculated is " + min);
+
 		//label update
 		for(Vertice x : graph.xverts)
 		{
@@ -229,14 +244,53 @@ public class HungarianAlgorithm
 				y.setLabel(y.getLabel()+min);
 			}
 		}
+		//graph.printLabel();
 		UpdatefeasibleLabel();
-		//doStep4()
+		//feasible_labelled.printGraph();
+		recomputeNoS();
+		doStep4();
 
 	}
+
+	// public static void UpdateGraphLabel(int value)
+	// {
+	// 	for (Vertice x: graph.xverts)
+	// 	{
+			
+	// 		if(checkKey(x.getName(),true))
+	// 		{
+	// 			x.setLabel(x.getLabel() - value);
+	// 		}
+	// 		else
+	// 		{
+	// 			if(checkKey(x.getName(), false))
+	// 			{
+	// 				x.setLabel(x.getLabel() + value);
+	// 			}
+	// 		}
+	// 	}
+
+	// 	for (Vertice y: graph.yverts)
+	// 	{
+			
+	// 		if(checkKey(y.getName(),true))
+	// 		{
+	// 			y.setLabel(y.getLabel() - value);
+	// 		}
+	// 		else
+	// 		{
+	// 			if(checkKey(y.getName(), false))
+	// 			{
+	// 				y.setLabel(y.getLabel() + value);
+	// 			}
+	// 		}
+	// 	}
+	// }
 
 	//public static void UpdatefeasibleLabel(BipartiteGraph graph)
 	public static void UpdatefeasibleLabel()
 	{
+		System.out.println("UPDATING FEASIBLE LABEL");
 		BipartiteGraph new_el = new BipartiteGraph(graph.size, graph.maxWeight);
 		for (Vertice x: graph.xverts)
 		{
@@ -266,6 +320,8 @@ public class HungarianAlgorithm
 			}
 		}
 		feasible_labelled = new_el;
+		//feasible_labelled.printLabel();
+
 	}
 
 	public static boolean recomputeNoS()
@@ -308,6 +364,7 @@ public class HungarianAlgorithm
 		nos_minus_t = new HashSet<Vertice>(); //Neighbors of S minus T
 		if(neighbors_of_s.size()==t.size())
 		{
+			System.out.println("Neighbors of S and  set T now equal");
 			for(Vertice y: neighbors_of_s)
 			{
 				if(t.contains(y))
@@ -323,7 +380,13 @@ public class HungarianAlgorithm
 		}
 		else
 		{
+			
 			neighbors_of_s_equals_t=false;
+			for(Vertice y: neighbors_of_s)
+			{
+				nos_minus_t.add(y);
+			}
+			//System.out.println(nos_minus_t.size());;
 
 		}
 		return neighbors_of_s_equals_t;
@@ -333,10 +396,11 @@ public class HungarianAlgorithm
 	{
 		System.out.println("Doing step 4====================");
 		Vertice y=null;
+		System.out.println(picked_u.getName() +" is picked_u");
 
 		System.out.println(nos_minus_t.size());
-		System.out.println("First examine the matchgraph");
-		initial_match.printGraph();
+		//System.out.println("First examine the matchgraph");
+		//initial_match.printGraph();
 		for(Vertice picked: nos_minus_t)
 		{
 			y=picked;
@@ -344,16 +408,30 @@ public class HungarianAlgorithm
 
 			break;
 		}
+
+		for(Vertice picked: initial_match.yverts)
+		{
+			
+			if(picked.getName().equals(y.getName()))
+			{
+				y=picked;
+			}
+			//System.out.println(picked.getName() + "Neighbors Size " + picked.neighbors.size());
+
+			//break;
+		}
+		System.out.println("picked y from Neighbors of S minus t = " + y.getName());
 		if(initial_match.matched(y.getName()))
 		{
-			System.out.println("Y matched");
-			System.out.println(y.neighbors.size());
+			//System.out.println("Y matched");
+			//System.out.println(y.neighbors.size());
 			for(Vertice k: y.neighbors.keySet())
 			{
 				s.add(k);
-				System.out.println("Y is matched to "+ k.getName());
+				//System.out.println("Y is matched to "+ k.getName());
 			}
 			t.add(y);
+			//s.add()
 			recomputeNoS();
 			doStep3();
 

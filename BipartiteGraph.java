@@ -50,6 +50,17 @@ public class BipartiteGraph
 	    	yverts.add(new Vertice("y"+i, 0));
 	    }
 	}
+     public void printLabel(){
+        System.out.println("LABELS ARE:");
+        for (Vertice x: this.xverts)
+        {
+            System.out.println(x.getName() + " has label " + x.getLabel());
+        }
+        for (Vertice y: this.yverts)
+        {
+            System.out.println(y.getName() + " has label " + y.getLabel());
+        }
+     }
 
     public void addEdge(String xvertName, String yvertName, int weight)
     {
@@ -181,10 +192,10 @@ public class BipartiteGraph
         }
         else
         {
-           System.out.println(vertice);
+           //System.out.println(vertice);
            for (Vertice y : this.yverts)
             {
-                System.out.println("Vertice :" + y.getName() + " with neighbors size :" + y.neighbors.size());
+                //System.out.println("Vertice :" + y.getName() + " with neighbors size :" + y.neighbors.size());
                 if(y.getName().equals(vertice))
                 {
                     if(y.neighbors.size()==1)
