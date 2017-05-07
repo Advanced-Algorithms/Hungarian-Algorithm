@@ -19,26 +19,30 @@ public class HungarianAlgorithm
 	public static Set<Vertice> nos_minus_t;
 	public static Vertice picked_u;
 	public static Vertice start;
-	//public ArrayList<Vertice> 
+	public static ArrayList<String> order = new ArrayList<String>(); 
+	public static ArrayList<String> order_x = new ArrayList<String>(); 
+	public static ArrayList<String> order_y = new ArrayList<String>(); 
 
 	public static void main(String[] args)
 	{
 		BipartiteGraph g = new BipartiteGraph(Integer.parseInt(args[0]),Integer.parseInt(args[1]));
 		// graph = g;
-		// g.populateEdges();
+		 //g.populateEdges();
 		// g.printGraph();
-		BipartiteGraph mygraph = new BipartiteGraph(3, 15); //debugging purposes
+		BipartiteGraph mygraph = new BipartiteGraph(5, 15); //debugging purposes
 		mygraph.addEdge("x1", "y1", 1);
 		mygraph.addEdge("x1", "y2", 6);
 		mygraph.addEdge("x2", "y2", 8);
 		mygraph.addEdge("x2", "y3", 6);
 		mygraph.addEdge("x3", "y1", 4);
 		mygraph.addEdge("x3", "y3", 1);
-		// mygraph.addEdge("x4", "y1", 5);
-		// mygraph.addEdge("x5", "y2", 9);
-		// mygraph.addEdge("x4", "y4", 6);
-		// mygraph.addEdge("x5", "y4", 14);
+
+		 mygraph.addEdge("x4", "y4", 15);
+		 mygraph.addEdge("x5", "y2", 9);
+		 mygraph.addEdge("x2", "y5", 6);
+		//mygraph.addEdge("x5", "y4", 14);
 		graph=mygraph;
+		// graph = g;
 		graph.printGraph();
 
 		HungarianAlgorithm();
@@ -73,6 +77,7 @@ public class HungarianAlgorithm
 
 	public static void doStep2(int graphsize)
 	{
+		System.out.println("STEP 2========================");
 		s = new HashSet<Vertice>();
 		t = new HashSet<Vertice>();
 		if(initial_match.numberOfEdges()==graphsize)
@@ -91,8 +96,10 @@ public class HungarianAlgorithm
 					{
 						if(x.getName().equals(x1.getName())){
 							s.add(x1); //add the vertice from the feasible labelled not the initial match
+							//order.add(x1.getName());
+							//order_x.add(x1.getName());
 							picked_u = x;
-							System.out.println("FREE VERTICE: "+ picked_u.getName());
+							//System.out.println("FREE VERTICE: "+ picked_u.getName());
 							break;
 						}
 						
@@ -111,23 +118,24 @@ public class HungarianAlgorithm
 		neighbors_of_s = new HashSet<Vertice>();
 		for(Vertice vert: s)
 		{
-			System.out.println("Printing neighbors of S");
+			//System.out.println("Printing neighbors of S");
 			for(Vertice neighbor : vert.neighbors.keySet())
 			{
 				neighbors_of_s.add(neighbor);
-				System.out.println(neighbor.getName());
+				//System.out.println(neighbor.getName());
 			}
 		}
 		boolean neighbors_of_s_equals_t = true;
 		nos_minus_t = new HashSet<Vertice>(); //Neighbors of S minus T
 		if(neighbors_of_s.size()==t.size())
 		{
-			System.out.println("SizeEqual, Printing neighbors of S minus t");
+			//System.out.println(" NoS & T SizeEqual, Printing neighbors of S minus t");
 
 			for(Vertice y: neighbors_of_s)
 			{
 				if(t.contains(y))
 				{
+					//System.out.println("Set T contains: "+ y.getName());
 					continue;
 				}
 				else
@@ -135,18 +143,29 @@ public class HungarianAlgorithm
 					neighbors_of_s_equals_t = false;
 					nos_minus_t.add(y);
 					//System.out.println(y.getName());
-					System.out.println(nos_minus_t.size());;
+					//System.out.println(nos_minus_t.size());;
 				}
 			}
 		}
 		else
 		{
+			//System.out.println(" NoS & T Size NOT Equal, Printing neighbors of S minus t");
+
 			neighbors_of_s_equals_t=false;
 			for(Vertice y: neighbors_of_s)
 			{
-				nos_minus_t.add(y);
+				if(t.contains(y))
+				{
+					//System.out.println("Set T contains: "+ y.getName());
+					continue;
+				}
+				else
+				{
+					nos_minus_t.add(y);
+					//System.out.println(nos_minus_t.size());;
+				}
 			}
-			System.out.println(nos_minus_t.size());;
+			//System.out.println(nos_minus_t.size());;
 		}
 
 		if(neighbors_of_s_equals_t)
@@ -199,16 +218,16 @@ public class HungarianAlgorithm
 		for (Vertice v : s)
 		{
 			String name = v.getName();
-			System.out.println(name + "From set S");
+			//System.out.println(name + "From set S");
 			for (Vertice y: graph.yverts)
 			{
 				if(!checkKey(y.getName(),false)) 
 				{
-					System.out.println(y.getName() +" Not in Set T");
+					//System.out.println(y.getName() +" Not in Set T");
 					int weight=graph.edgeWeight(v.getName(), y.getName());
 					if(weight!=0)
 					{
-						System.out.println("weight of edge is "+ weight);
+						//System.out.println("weight of edge is "+ weight);
 						int newValue = v.getLabel() + y.getLabel() - weight;
 						if(newValue<min)
 						{
@@ -320,7 +339,8 @@ public class HungarianAlgorithm
 			}
 		}
 		feasible_labelled = new_el;
-		//feasible_labelled.printLabel();
+		feasible_labelled.printGraph();
+		recomputeNoS();
 
 	}
 
@@ -364,10 +384,11 @@ public class HungarianAlgorithm
 		nos_minus_t = new HashSet<Vertice>(); //Neighbors of S minus T
 		if(neighbors_of_s.size()==t.size())
 		{
-			System.out.println("Neighbors of S and  set T now equal");
+			//System.out.println("size Neighbors of S and  set T  equal");
 			for(Vertice y: neighbors_of_s)
 			{
-				if(t.contains(y))
+				//if(t.contains(y))
+				if(checkKey(y.getName(),false))
 				{
 					continue;
 				}
@@ -380,15 +401,25 @@ public class HungarianAlgorithm
 		}
 		else
 		{
-			
+			//System.out.println(" NoS & T Size NOT Equal, Printing neighbors of S minus t");
+
 			neighbors_of_s_equals_t=false;
 			for(Vertice y: neighbors_of_s)
 			{
-				nos_minus_t.add(y);
+				if(t.contains(y))
+				{
+					//System.out.println("Set T contains: "+ y.getName());
+					continue;
+				}
+				else
+				{
+					nos_minus_t.add(y);
+					//System.out.println(nos_minus_t.size());;
+				}
 			}
 			//System.out.println(nos_minus_t.size());;
-
 		}
+
 		return neighbors_of_s_equals_t;
 
 	}
@@ -398,13 +429,13 @@ public class HungarianAlgorithm
 		Vertice y=null;
 		System.out.println(picked_u.getName() +" is picked_u");
 
-		System.out.println(nos_minus_t.size());
+		//System.out.println(nos_minus_t.size());
 		//System.out.println("First examine the matchgraph");
 		//initial_match.printGraph();
 		for(Vertice picked: nos_minus_t)
 		{
 			y=picked;
-			System.out.println(y.getName());
+			//System.out.println(y.getName());
 
 			break;
 		}
@@ -420,17 +451,25 @@ public class HungarianAlgorithm
 
 			//break;
 		}
-		System.out.println("picked y from Neighbors of S minus t = " + y.getName());
+		//System.out.println("picked y from Neighbors of S minus t = " + y.getName());
 		if(initial_match.matched(y.getName()))
 		{
-			//System.out.println("Y matched");
+			System.out.println("Y matched");
 			//System.out.println(y.neighbors.size());
+			String toAdd1 = y.getName();
+			 String toAdd2 = "dummy" ;
+			// //order.add(y.getName());
+			
 			for(Vertice k: y.neighbors.keySet())
 			{
 				s.add(k);
+				toAdd2 = k.getName();
+				//order_x.add(k.getName());
 				//System.out.println("Y is matched to "+ k.getName());
 			}
 			t.add(y);
+			//order_y.add(y.getName());
+			
 			//s.add()
 			recomputeNoS();
 			doStep3();
@@ -441,20 +480,48 @@ public class HungarianAlgorithm
 			
 			int weight=0;
 			System.out.println(y.getName()+ " is free");
-			for(Vertice x: feasible_labelled.xverts)
+			//order.add(y.getName());
+			//order_y.add(y.getName());
+			//System.out.println("*******************************");
+			//feasible_labelled.printGraph();
+			//System.out.println("&&&&&&&&&&&&&&&&&&&&&&&&&");
+			//initial_match.printGraph();
+			//initial_match.printLabel();
+			ArrayList<String> path  = dfs2(picked_u.getName(), y.getName());
+			System.out.println (path);
+			for(int i = 0;i<path.size()-1; i++)
 			{
-				if(x.getName().equals(picked_u.getName()))
+				//System.out.println(initial_match.edgeWeight(path.get(i), path.get(i+1)));
+				if(initial_match.edgeWeight(path.get(i), path.get(i+1))!=0)
 				{
-					for(Vertice y1: x.neighbors.keySet())
-					{
-						if( y1.getName().equals(y.getName()))
-						{
-							weight = x.neighbors.get(y1);
-						}
-					}
+					//System.out.println("WE are here!");
+					//System.out.println(initial_match.edgeWeight(path.get(i), path.get(i+1)));
+					initial_match.removeEdge(path.get(i),path.get(i+1));
+				}
+				else
+				{
+					//System.out.println("got to else");
+					int edge = feasible_labelled.edgeWeight(path.get(i), path.get(i+1));
+					initial_match.addEdge(path.get(i), path.get(i+1), edge);
 				}
 			}
-			initial_match.addEdge(picked_u.getName(), y.getName(), weight);
+			initial_match.printGraph();
+			// for(Vertice x: feasible_labelled.xverts)
+			// {
+			// 	if(x.getName().equals(picked_u.getName()))
+			// 	{
+			// 		for(Vertice y1: x.neighbors.keySet())
+			// 		{
+			// 			if( y1.getName().equals(y.getName()))
+			// 			{
+			// 				weight = x.neighbors.get(y1);
+			// 			}
+			// 		}
+			// 	}
+			// }
+			//initial_match.addEdge(picked_u.getName(), y.getName(), weight);
+			//System.out.println(order_x.toString());
+			//System.out.println(order_y.toString());
 			doStep2(graph.size);
 			//find the augmenting path
 			
@@ -527,8 +594,76 @@ public class HungarianAlgorithm
 				v.neighbors = new_1;
 			}
 		}
-		//System.out.println("/////");
-		//new_graph.printGraph();
 		return new_graph;
+	}
+	public static ArrayList<String> dfs2(String source, String dest)
+	{
+		ArrayList<String> path = new ArrayList<String>();
+		if(dfs22(path,source,dest))
+		{
+			return path;
+		}
+		else{
+			return new ArrayList<String>();
+		}
+	}
+
+	public static boolean dfs22(ArrayList<String> path, String curr, String dest)
+	{
+		//System.out.println(curr);
+		Vertice cur1 = null;
+		ArrayList<Vertice> toExplore;
+		if(curr.startsWith("x"))
+		{
+			toExplore = feasible_labelled.xverts;
+		}
+		else{
+			toExplore = feasible_labelled.yverts;
+		}
+
+		for (Vertice v: toExplore)
+		{
+			//System.out.println(v.getName() + " vs " + curr);
+			if(v.getName().equals(curr))
+			{
+				cur1 = v;
+				break;
+			}
+			
+		}
+		//System.out.println(cur1.getName() + " with color " + cur1.color);
+		if(cur1.color.equals("white"))
+		{
+			path.add(cur1.getName());
+			cur1.color = "black";
+		}
+		else
+		{
+			return false;
+		}
+		if(cur1.getName().equals(dest))
+		{
+			return true;
+		}
+		boolean check = false;
+		for(Vertice next: cur1.neighbors.keySet())
+		{
+			if(!dfs22(path,next.getName(),dest))
+			{
+				check = false;
+			}
+			else{
+				check=true;
+				break;
+			}
+		}
+		if(!check)
+			{
+				path.remove(path.size()-1);
+				return false;
+			}
+			else{
+				return true;
+			}
 	}
 }

@@ -8,8 +8,8 @@ public class Vertice
 	public HashMap<Vertice, Integer> neighbors;
 	private int maxEdgeWeight;
 	private Vertice maxEdgeNeighbor;
-	public boolean visited; //for dfs
-	//public Vertice prev = null;
+	public String color = "white" ;//for dfs
+	public String prev = "null";
 	
 	public Vertice(String name, int label){
 		this.name = name;

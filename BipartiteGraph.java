@@ -50,6 +50,7 @@ public class BipartiteGraph
 	    	yverts.add(new Vertice("y"+i, 0));
 	    }
 	}
+
      public void printLabel(){
         System.out.println("LABELS ARE:");
         for (Vertice x: this.xverts)
@@ -157,19 +158,69 @@ public class BipartiteGraph
 
     public int edgeWeight(String x, String y)
     {
-        for(Vertice v: xverts){
+        if(x.startsWith("y"))
+        {
+            String z = y;
+            y=x;
+            x=z;
+        }
+        //System.out.println("Got to edgeWeight");
+       //  System.out.println(x +"   "+ y);
+        for(Vertice v: this.xverts){
             if(v.getName().equals(x))
             {
+                // System.out.println("Step 1 done");
+                 //System.out.println(v.neighbors.size());
                 for(Vertice k: v.neighbors.keySet())
                 {
+                    // System.out.println(k.getName());
                     if(k.getName().equals(y))
                     {
+                        //System.out.println(v.neighbors.get(k));
                         return v.neighbors.get(k);
                     }
                 }
             }
         }
         return 0;
+    }
+
+    public void removeEdge(String x, String y)
+    {
+        if(x.startsWith("y"))
+        {
+            String z = y;
+            y=x;
+            x=z;
+        }
+       //System.out.println("Got to removeEdge");
+       //System.out.println(x +"   "+ y);
+       for(Vertice v: xverts){
+            if(v.getName().equals(x))
+            {
+                for(Vertice k: v.neighbors.keySet())
+                {
+                    if(k.getName().equals(y))
+                    {
+                        v.neighbors.remove(k);
+                        break;
+                    }
+                }
+            }
+        }
+        for(Vertice v: yverts){
+            if(v.getName().equals(y))
+            {
+                for(Vertice k: v.neighbors.keySet())
+                {
+                    if(k.getName().equals(x))
+                    {
+                        v.neighbors.remove(k);
+                        break;
+                    }
+                }
+            }
+        }
     }
 
     //check if a particular vertice is matched
