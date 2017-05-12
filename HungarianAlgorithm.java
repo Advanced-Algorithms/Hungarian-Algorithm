@@ -24,8 +24,8 @@ public class HungarianAlgorithm
 
 	public static void main(String[] args)
 	{
-		// to keep it random, do this: 
-		// recommended max size is 5 vertices to avoid possible stack overflow 
+		/* To use random generated bipartite graphs, recommemmended vertice size <=5*/
+		
 		// BipartiteGraph g = new BipartiteGraph(Integer.parseInt(args[0]),Integer.parseInt(args[1]));
 		// g.populateEdges(); 
 

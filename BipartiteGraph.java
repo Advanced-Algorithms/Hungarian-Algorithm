@@ -35,6 +35,7 @@ public class BipartiteGraph
      * Creates a graph with two sets of vertices objects.
      *
      * @param size: size of each vertice set
+     * @param maxweight: maximum weight of randomly generated edges
      */
     public BipartiteGraph(int size,int maxWeight)
 	{
@@ -146,6 +147,8 @@ public class BipartiteGraph
 
     	}
 	}
+
+    //returns number of edges in the graph
     public int numberOfEdges()
     {
         int count = 0;
@@ -259,6 +262,8 @@ public class BipartiteGraph
         }
         return false;
     }
+
+    //print the graph
     public void printGraph()
     {
 		for (Vertice temp : xverts) {
